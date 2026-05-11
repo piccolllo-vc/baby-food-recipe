@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LittleMates — 아기 이유식 레시피</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#6366F1">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 512 512%27><rect width=%27512%27 height=%27512%27 rx=%2796%27 fill=%27%236366F1%27/><text x=%27256%27 y=%27340%27 font-size=%27280%27 text-anchor=%27middle%27>🍼</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6366F1;
+      --primary-hover: #4F46E5;
+    }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<!-- Navbar -->
+<nav class="bg-white shadow-sm sticky top-0 z-50">
+  <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
+    <span class="text-lg font-bold text-indigo-600">🍼 LittleMates</span>
+    <div id="authSection">
+      <button onclick="signInWithGoogle()" class="text-sm bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+        Google로 로그인
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main class="max-w-3xl mx-auto px-4 py-6">
+
+  <!-- Tab Navigation -->
+  <div class="flex gap-2 mb-6 overflow-x-auto">
+    <button onclick="switchTab('fridge')" class="tab-btn px-4 py-2 rounded-full text-sm font-medium bg-indigo-100 text-indigo-700" data-tab="fridge">🧊 냉장고</button>
+    <button onclick="switchTab('recipes')" class="tab-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600" data-tab="recipes">🍳 레시피</button>
+    <button onclick="switchTab('baby')" class="tab-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600" data-tab="baby">👶 아기정보</button>
+  </div>
+
+  <!-- ===== TAB: 냉장고 ===== -->
+  <section id="tab-fridge" class="tab-content">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-bold text-gray-800">나의 냉장고</h2>
+      <button onclick="openFridgeModal()" class="text-sm bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700">+ 재료추가</button>
+    </div>
+    <div id="fridgeList" class="space-y-2">
+      <p class="text-gray-400 text-sm">냉장고가 비어있습니다. 재료를 추가해보세요.</p>
+    </div>
+    <div id="expiryWarning" class="mt-4 hidden">
+      <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
+        ⚠️ 유통기한 임박 재료가 있습니다
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TAB: 레시피 ===== -->
+  <section id="tab-recipes" class="tab-content hidden">
+    <h2 class="text-xl font-bold text-gray-800 mb-4">🍳 이유식 레시피</h2>
+    <div id="recipeList" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <p class="text-gray-400 text-sm col-span-2">레시피를 불러오는 중...</p>
+    </div>
+  </section>
+
+  <!-- ===== TAB: 아기정보 ===== -->
+  <section id="tab-baby" class="tab-content hidden">
+    <h2 class="text-xl font-bold text-gray-800 mb-4">👶 아기 정보</h2>
+    <div id="babyProfile" class="bg-white rounded-xl p-5 shadow-sm">
+      <p class="text-gray-400 text-sm">아기 정보를 등록해주세요.</p>
+      <button onclick="openBabyModal()" class="mt-3 text-sm bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">아기 정보 등록</button>
+    </div>
+  </section>
+
+</main>
+
+<!-- ===== 재료 추가 Modal ===== -->
+<div id="fridgeModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl w-full max-w-md p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-bold">🧊 재료 추가</h3>
+      <button onclick="closeFridgeModal()" class="text-gray-400 hover:text-gray-600">✕</button>
+    </div>
+    <div class="space-y-3">
+      <div>
+        <label class="text-sm font-medium text-gray-700">재료명</label>
+        <input type="text" id="itemName" class="w-full border rounded-lg px-3 py-2 mt-1 text-sm" placeholder="예: 당근">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-700">분류</label>
+        <select id="itemCategory" class="w-full border rounded-lg px-3 py-2 mt-1 text-sm">
+          <option value="채소">🥬 채소</option>
+          <option value="과일">🍎 과일</option>
+          <option value="육류">🥩 육류</option>
+          <option value="어류">🐟 어류</option>
+          <option value="곡물">🌾 곡물</option>
+          <option value="유제품">🧀 유제품</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-700">수량</label>
+        <input type="text" id="itemQuantity" class="w-full border rounded-lg px-3 py-2 mt-1 text-sm" placeholder="예: 1개, 100g">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-700">유통기한 (선택)</label>
+        <input type="date" id="itemExpiry" class="w-full border rounded-lg px-3 py-2 mt-1 text-sm">
+      </div>
+    </div>
+    <div class="flex gap-2 mt-5">
+      <button onclick="closeFridgeModal()" class="flex-1 px-4 py-2 border rounded-lg text-sm hover:bg-gray-50">취소</button>
+      <button onclick="addFridgeItem()" class="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700">추가</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 아기정보 Modal ===== -->
+<div id="babyModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl w-full max-w-md p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-bold">👶 아기 정보</h3>
+      <button onclick="closeBabyModal()" class="text-gray-400 hover:text-gray-600">✕</button>
+    </div>
+    <div class="space-y-3">
+      <div>
+        <label class="text-sm font-medium text-gray-700">이름</label>
+        <input type="text" id="babyName" class="w-full border rounded-lg px-3 py-2 mt-1 text-sm" placeholder="태린">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-700">생년월일</label>
+        <input type="date" id="babyBirth" class="w-full border rounded-lg px-3 py-2 mt-1 text-sm">
+      </div>
+      <div>
+        <label class="text-sm font-medium text-gray-700">알레르기 (선택, 쉼표로 구분)</label>
+        <input type="text" id="babyAllergies" class="w-full border rounded-lg px-3 py-2 mt-1 text-sm" placeholder="예: 계란, 우유">
+      </div>
+    </div>
+    <div class="flex gap-2 mt-5">
+      <button onclick="closeBabyModal()" class="flex-1 px-4 py-2 border rounded-lg text-sm hover:bg-gray-50">취소</button>
+      <button onclick="saveBabyProfile()" class="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 레시피 상세 Modal ===== -->
+<div id="recipeModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-bold" id="recipeModalTitle">레시피</h3>
+      <button onclick="closeRecipeModal()" class="text-gray-400 hover:text-gray-600">✕</button>
+    </div>
+    <div id="recipeModalImg" class="w-full h-36 rounded-xl mb-4 flex items-center justify-center text-5xl">🍽️</div>
+    <div class="space-y-4">
+      <div>
+        <p class="text-sm text-indigo-600 font-medium" id="recipeModalAge"></p>
+        <p class="text-gray-600 text-sm mt-1" id="recipeModalDesc"></p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-gray-800 mb-2">🥗 재료</h4>
+        <ul id="recipeModalIngredients" class="text-sm text-gray-600 space-y-1"></ul>
+      </div>
+      <div>
+        <h4 class="font-semibold text-gray-800 mb-2">👩‍🍳 만드는 법</h4>
+        <ol id="recipeModalMethod" class="text-sm text-gray-600 space-y-1"></ol>
+      </div>
+      <div id="recipeModalNutrition" class="flex flex-wrap gap-2"></div>
+      <div id="recipeModalAllergen" class="hidden">
+        <div class="bg-red-50 border border-red-200 rounded-lg p-2 text-xs text-red-700">⚠️ 알레르기 주의</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script>
+  // ── Supabase Client ──────────────────────────────────────
+  const sb = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+  let currentUser = null;
+
+  // ── Auth ─────────────────────────────────────────────────
+  async function initAuth() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session?.user) {
+      currentUser = session.user;
+      updateAuthUI(session.user);
+    }
+    sb.auth.onAuthStateChange((e, session) => {
+      currentUser = session?.user ?? null;
+      updateAuthUI(session?.user ?? null);
+    });
+  }
+
+  function updateAuthUI(user) {
+    const el = document.getElementById('authSection');
+    if (user) {
+      const name = user.user_metadata?.full_name || user.email;
+      el.innerHTML = '<div class="flex items-center gap-2"><span class="text-sm text-gray-600">' + name + '</span><button onclick="signOut()" class="text-xs text-gray-400 hover:text-gray-600">로그아웃</button></div>';
+    } else {
+      el.innerHTML = '<button onclick="signInWithGoogle()" class="text-sm bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Google로 로그인</button>';
+    }
+  }
+
+  async function signInWithGoogle() {
+    const { error } = await sb.auth.signInWithOAuth({ provider: 'google' });
+    if (error) alert('로그인 실패: ' + error.message);
+  }
+
+  async function signOut() {
+    await sb.auth.signOut();
+  }
+
+  // ── Tab Navigation ───────────────────────────────────────
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.getElementById('tab-' + tab).classList.remove('hidden');
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.className = btn.dataset.tab === tab
+        ? 'tab-btn px-4 py-2 rounded-full text-sm font-medium bg-indigo-100 text-indigo-700'
+        : 'tab-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600';
+    });
+    if (tab === 'fridge' && currentUser) loadFridgeItems();
+    if (tab === 'baby' && currentUser) loadBabyProfile();
+  }
+
+  // ── Fridge CRUD ──────────────────────────────────────────
+  async function loadFridgeItems() {
+    if (!currentUser) return;
+    const { data: fridges } = await sb.from('fridges').select('id').eq('user_id', currentUser.id).maybeSingle();
+    if (!fridges) {
+      document.getElementById('fridgeList').innerHTML = '<p class="text-gray-400 text-sm">냉장고가 비어있습니다. 재료를 추가해보세요.</p>';
+      return;
+    }
+    const { data: items } = await sb.from('fridge_items').select('*').eq('fridge_id', fridges.id).order('created_at', { ascending: false });
+    renderFridgeItems(items || []);
+  }
+
+  function renderFridgeItems(items) {
+    const container = document.getElementById('fridgeList');
+    if (!items.length) {
+      container.innerHTML = '<p class="text-gray-400 text-sm">냉장고가 비어있습니다. 재료를 추가해보세요.</p>';
+      return;
+    }
+    container.innerHTML = items.map(item => {
+      const expiryText = item.expiry_date ? ' · ' + item.expiry_date : '';
+      const expiryClass = item.expiry_date && new Date(item.expiry_date) <= new Date(Date.now() + 3*86400000) ? 'text-red-500' : 'text-gray-400';
+      return '<div class="bg-white rounded-xl p-4 shadow-sm flex items-center justify-between">' +
+        '<div class="flex items-center gap-3">' +
+        '<span class="text-2xl">' + getCategoryEmoji(item.category) + '</span>' +
+        '<div><p class="font-medium text-gray-800">' + item.name + '</p>' +
+        '<p class="text-xs ' + expiryClass + '">' + (item.quantity || '') + expiryText + '</p></div></div>' +
+        '<button onclick="deleteFridgeItem(\'' + item.id + '\')" class="text-xs text-red-400 hover:text-red-600">삭제</button></div>';
+    }).join('');
+
+    const near = items.filter(i => i.expiry_date && new Date(i.expiry_date) <= new Date(Date.now() + 3*86400000));
+    const warn = document.getElementById('expiryWarning');
+    if (near.length) {
+      warn.classList.remove('hidden');
+      warn.querySelector('div').innerHTML = '⚠️ 유통기한 임박: ' + near.map(i=>i.name).join(', ');
+    } else {
+      warn.classList.add('hidden');
+    }
+  }
+
+  function getCategoryEmoji(cat) {
+    const map = { '채소':'🥬','과일':'🍎','육류':'🥩','어류':'🐟','곡물':'🌾','유제품':'🧀' };
+    return map[cat] || '🥄';
+  }
+
+  function openFridgeModal() {
+    if (!currentUser) { alert('로그인 후 이용해주세요'); return; }
+    document.getElementById('fridgeModal').classList.remove('hidden');
+  }
+  function closeFridgeModal() {
+    document.getElementById('fridgeModal').classList.add('hidden');
+    ['itemName','itemCategory','itemQuantity','itemExpiry'].forEach(function(id) { document.getElementById(id).value = ''; });
+  }
+
+  async function addFridgeItem() {
+    if (!currentUser) return;
+    var name = document.getElementById('itemName').value.trim();
+    var category = document.getElementById('itemCategory').value;
+    var quantity = document.getElementById('itemQuantity').value.trim();
+    var expiry = document.getElementById('itemExpiry').value;
+    if (!name) { alert('재료명을 입력해주세요'); return; }
+
+    var fridge;
+    var existing = await sb.from('fridges').select('id').eq('user_id', currentUser.id).maybeSingle();
+    if (existing.data) {
+      fridge = existing.data;
+    } else {
+      var newFridge = await sb.from('fridges').insert({ user_id: currentUser.id, name: '나의 냉장고' }).select().single();
+      fridge = newFridge.data;
+    }
+
+    var error = await sb.from('fridge_items').insert({
+      fridge_id: fridge.id, name: name, category: category, quantity: quantity, expiry_date: expiry || null
+    });
+    if (error) alert('추가 실패: ' + error.message);
+    else { closeFridgeModal(); loadFridgeItems(); }
+  }
+
+  async function deleteFridgeItem(id) {
+    if (!confirm('삭제할까요?')) return;
+    await sb.from('fridge_items').delete().eq('id', id);
+    loadFridgeItems();
+  }
+
+  // ── Baby Profile ─────────────────────────────────────────
+  async function loadBabyProfile() {
+    if (!currentUser) return;
+    var data = (await sb.from('baby_profiles').select('*').eq('user_id', currentUser.id).maybeSingle()).data;
+    if (!data) return;
+    var allHtml = data.allergies && data.allergies.length
+      ? '<p class="text-sm text-amber-600">⚠️ 알레르기: ' + data.allergies.join(', ') + '</p>'
+      : '';
+    document.getElementById('babyProfile').innerHTML = '<div class="space-y-2"><p class="text-2xl font-bold">' + data.name + '</p><p class="text-sm text-gray-500">🎂 ' + data.birth_date + '</p>' + allHtml + '</div><button onclick="openBabyModal()" class="mt-3 text-sm border px-4 py-2 rounded-lg hover:bg-gray-50">수정</button>';
+  }
+
+  function openBabyModal() {
+    if (!currentUser) { alert('로그인 후 이용해주세요'); return; }
+    document.getElementById('babyModal').classList.remove('hidden');
+  }
+  function closeBabyModal() {
+    document.getElementById('babyModal').classList.add('hidden');
+    ['babyName','babyBirth','babyAllergies'].forEach(function(id) { document.getElementById(id).value = ''; });
+  }
+
+  async function saveBabyProfile() {
+    if (!currentUser) return;
+    var name = document.getElementById('babyName').value.trim();
+    var birth = document.getElementById('babyBirth').value;
+    var allergyInput = document.getElementById('babyAllergies').value;
+    var allergies = allergyInput ? allergyInput.split(',').map(function(s) { return s.trim(); }).filter(Boolean) : [];
+    if (!name || !birth) { alert('이름과 생일을 입력해주세요'); return; }
+
+    var existing = (await sb.from('baby_profiles').select('id').eq('user_id', currentUser.id).maybeSingle()).data;
+    var payload = { user_id: currentUser.id, name: name, birth_date: birth, allergies: allergies };
+    var error;
+    if (existing) {
+      error = (await sb.from('baby_profiles').update(payload).eq('user_id', currentUser.id)).error;
+    } else {
+      error = (await sb.from('baby_profiles').insert(payload)).error;
+    }
+    if (error) alert('저장 실패: ' + error.message);
+    else { closeBabyModal(); loadBabyProfile(); }
+  }
+
+  // ── Recipes (from recipes.json) ────────────────────────
+  var RECIPES = [];
+
+  async function loadRecipes() {
+    try {
+      var res = await fetch('./data/recipes.json');
+      if (!res.ok) throw new Error('recipes.json not found');
+      RECIPES = await res.json();
+      renderRecipes(RECIPES);
+    } catch (e) {
+      renderRecipes([{ title: '샘플 레시피', age: '6m', emoji: '🥕', desc: '레시피 로드 실패', ingredients: [], method: [], nutrition: {} }]);
+    }
+  }
+
+  function renderRecipes(recipes) {
+    var container = document.getElementById('recipeList');
+    if (!recipes || !recipes.length) {
+      container.innerHTML = '<p class="text-gray-400 text-sm col-span-2">레시피가 없습니다.</p>';
+      return;
+    }
+    container.innerHTML = recipes.map(function(r) {
+      return '<div class="bg-white rounded-xl p-4 shadow-sm cursor-pointer hover:shadow-md transition" onclick="openRecipeModal(' + r.id + ')">' +
+        '<div class="w-full h-28 rounded-lg mb-3 flex items-center justify-center text-4xl" style="background:' + (r.imgColor || '#F3F4F6') + '">' + (r.emoji || '🍽️') + '</div>' +
+        '<p class="font-semibold text-gray-800">' + r.title + '</p>' +
+        '<p class="text-xs text-gray-400 mb-1">' + (r.ageLabel || r.age) + ' · ' + (r.stage || '') + '</p>' +
+        '<p class="text-sm text-gray-500">' + (r.desc || '') + '</p></div>';
+    }).join('');
+  }
+
+  function openRecipeModal(id) {
+    var r = null;
+    for (var i = 0; i < RECIPES.length; i++) {
+      if (RECIPES[i].id == id) { r = RECIPES[i]; break; }
+    }
+    if (!r) return;
+
+    var allergenEl = document.getElementById('recipeModalAllergen');
+    var allergens = r.allergens || [];
+    if (allergens.length) {
+      allergenEl.classList.remove('hidden');
+      allergenEl.querySelector('div').textContent = '⚠️ 알레르기: ' + allergens.join(', ');
+    } else {
+      allergenEl.classList.add('hidden');
+    }
+
+    document.getElementById('recipeModalTitle').textContent = r.title;
+    document.getElementById('recipeModalImg').textContent = r.emoji || '🍽️';
+    document.getElementById('recipeModalImg').style.background = r.imgColor || '#F3F4F6';
+    document.getElementById('recipeModalAge').textContent = r.ageLabel || r.age;
+    document.getElementById('recipeModalDesc').textContent = r.desc || '';
+    document.getElementById('recipeModalIngredients').innerHTML = (r.ingredients || []).map(function(i) { return '<li>' + i + '</li>'; }).join('');
+    document.getElementById('recipeModalMethod').innerHTML = (r.method || []).map(function(m, idx) { return '<li>' + (idx+1) + '. ' + m + '</li>'; }).join('');
+    document.getElementById('recipeModalNutrition').innerHTML = Object.entries(r.nutrition || {}).map(function(entry) {
+      return '<span class="text-xs bg-gray-100 px-2 py-1 rounded">' + entry[0] + ': ' + entry[1] + '</span>';
+    }).join(' ');
+
+    document.getElementById('recipeModal').classList.remove('hidden');
+  }
+
+  function closeRecipeModal() {
+    document.getElementById('recipeModal').classList.add('hidden');
+  }
+
+  // ── Init ────────────────────────────────────────────────
+  initAuth().then(function() {
+    if (currentUser) {
+      loadFridgeItems();
+      loadBabyProfile();
+    }
+
+  // Service Worker registration (PWA offline support)
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/sw.js").then(function() {
+      console.log("SW registered");
+    }).catch(function(err) {
+      console.warn("SW registration failed:", err);
+    });
+  }
+    loadRecipes();
+  });
+</script>
+</body>
+</html>

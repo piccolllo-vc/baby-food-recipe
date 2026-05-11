@@ -1,0 +1,37 @@
+{
+  "채소": [
+    { "id": "pumpkin", "name": "단호박", "emoji": "🎃" },
+    { "id": "broccoli", "name": "브로콜리", "emoji": "🥦" },
+    { "id": "carrot", "name": "당근", "emoji": "🥕" },
+    { "id": "spinach", "name": "시금치", "emoji": "🥬" },
+    { "id": "potato", "name": "감자", "emoji": "🥔" },
+    { "id": "zucchini", "name": "호박", "emoji": "🫛" },
+    { "id": "tomato", "name": "토마토", "emoji": "🍅" },
+    { "id": "cucumber", "name": "오이", "emoji": "🥒" }
+  ],
+  "과일": [
+    { "id": "apple", "name": "사과", "emoji": "🍎" },
+    { "id": "banana", "name": "바나나", "emoji": "🍌" },
+    { "id": "pear", "name": "배", "emoji": "🍐" },
+    { "id": "avocado", "name": "아보카도", "emoji": "🥑" },
+    { "id": "peach", "name": "복숭아", "emoji": "🍑" }
+  ],
+  "육류": [
+    { "id": "beef", "name": "소고기", "emoji": "🥩" },
+    { "id": "chicken", "name": "닭고기", "emoji": "🍗" },
+    { "id": "pork", "name": "돼지고기", "emoji": "🥓" },
+    { "id": "fish", "name": "연어", "emoji": "🐟" }
+  ],
+  "곡물": [
+    { "id": "rice", "name": "쌀", "emoji": "🍚" },
+    { "id": "oatmeal", "name": "귀리", "emoji": "🌾" },
+    { "id": "noodle", "name": "면", "emoji": "🍜" },
+    { "id": "bread", "name": "빵", "emoji": "🍞" }
+  ],
+  "유제품": [
+    { "id": "milk", "name": "우유", "emoji": "🥛" },
+    { "id": "cheese", "name": "치즈", "emoji": "🧀" },
+    { "id": "tofu", "name": "두부", "emoji": "🧈" },
+    { "id": "yogurt", "name": "요거트", "emoji": "🍶" }
+  ]
+}
