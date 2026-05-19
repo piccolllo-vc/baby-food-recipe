@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LittleMates 2차 검증 보고서 — 2026-05-17</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      line-height: 1.7;
+      padding: 40px 20px;
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+    .header {
+      background: linear-gradient(135deg, #dc2626, #f97316);
+      border-radius: 16px;
+      padding: 30px 35px;
+      margin-bottom: 30px;
+    }
+    .header h1 { font-size: 1.8em; color: #fff; margin-bottom: 8px; }
+    .header .meta { color: #fed7aa; font-size: 0.9em; }
+    h2 {
+      color: #f472b6;
+      margin: 35px 0 15px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #1e293b;
+    }
+    h3 { color: #fbbf24; margin: 20px 0 10px; }
+    .tag-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .tag {
+      background: #334155;
+      color: #cbd5e1;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85em;
+    }
+    .tag-red { background: #7f1d1d; color: #fca5a5; }
+    .tag-orange { background: #7c2d12; color: #fed7aa; }
+    .tag-green { background: #14532d; color: #86efac; }
+    table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+    th {
+      background: #1e293b;
+      color: #94a3b8;
+      text-align: left;
+      padding: 10px 15px;
+      border-radius: 8px 8px 0 0;
+    }
+    td { padding: 10px 15px; border-bottom: 1px solid #1e293b; font-size: 0.9em; }
+    tr:hover td { background: #1e293b; }
+    .card {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 12px 0;
+    }
+    .critical {
+      background: #450a0a;
+      border-left: 4px solid #ef4444;
+      padding: 20px;
+      border-radius: 0 12px 12px 0;
+      margin: 15px 0;
+    }
+    .critical-title { color: #ef4444; font-weight: bold; font-size: 1.1em; margin-bottom: 10px; }
+    .conclusion {
+      background: linear-gradient(135deg, #1e3a5f, #1e293b);
+      border-left: 4px solid #ef4444;
+      border-radius: 0 12px 12px 0;
+      padding: 20px 25px;
+      margin-top: 30px;
+    }
+    .conclusion h3 { color: #fca5a5; }
+    .ok { color: #4ade80; font-weight: bold; }
+    .fail { color: #f87171; font-weight: bold; }
+    .warn { color: #fbbf24; }
+    code {
+      background: #0f172a;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      color: #a5b4fc;
+      font-size: 0.88em;
+    }
+    .footer {
+      text-align: center;
+      color: #475569;
+      font-size: 0.85em;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #1e293b;
+    }
+    .badge-red { background: #7f1d1d; color: #fca5a5; padding: 2px 10px; border-radius: 20px; font-size: 0.8em; font-weight: bold; }
+    .badge-orange { background: #7c2d12; color: #fed7aa; padding: 2px 10px; border-radius: 20px; font-size: 0.8em; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="header">
+      <h1>🚨 LittleMates 2차 검증 보고서</h1>
+      <p class="meta">검증일: 2026-05-17 &nbsp;|&nbsp; 방법: 코드 정적 분석 &nbsp;|&nbsp; 검증자: 장그래</p>
+    </div>
+
+    <div class="critical">
+      <div class="critical-title">⚠️ 치명적 버그 발견 — 즉시 수정이 필요합니다</div>
+      <p>브라우저 자동화가blocked되어 실제 렌더링 확인이 불가해 코드 정적 분석을 수행했습니다. 그 결과, <strong style="color:#fca5a5">아기 정보 등록 Modal이 아예不存在</strong>하고, <strong style="color:#fca5a5">레시피 데이터 로딩 함수가 없습니다.</strong></p>
+    </div>
+
+    <h2>🔍 결함 함수·변수 목록</h2>
+    <table>
+      <tr><th>함수/변수</th><th>호출 위치</th><th>상태</th><th>영향</th></tr>
+      <tr><td><code>loadRecipes()</code></td><td>line 610</td><td><span class="fail">❌ 정의 없음</span></td><td>레시피 데이터 로드 안 됨</td></tr>
+      <tr><td><code>RECIPES</code></td><td>lines 496,500,501,521,527,558,561</td><td><span class="fail">❌ 정의 없음</span></td><td>전체 레시피 렌더링 불가</td></tr>
+      <tr><td><code>filterRecipes()</code></td><td>lines 59~62 (홈 연령대 링크)</td><td><span class="fail">❌ 정의 없음</span></td><td>퀵 링크 클릭 시 에러</td></tr>
+      <tr><td><code>getAllowedAges()</code></td><td>lines 500, 557</td><td><span class="fail">❌ 정의 없음</span></td><td>아기 연령대 필터링 불가</td></tr>
+      <tr><td><code>currentAgeFilter</code></td><td>line 561</td><td><span class="fail">❌ 정의 없음</span></td><td>연령대 필터 상태 추적 불가</td></tr>
+      <tr><td><code>openBabyModal()</code></td><td>line 126</td><td><span class="fail">❌ 정의 없음</span></td><td>아기 정보 등록 버튼 동작 안 함</td></tr>
+      <tr><td><code>closeBabyModal()</code></td><td>line 174</td><td><span class="fail">❌ 정의 없음</span></td><td>Modal 닫기 불가</td></tr>
+      <tr><td><code>saveBabyProfile()</code></td><td>line 192</td><td><span class="fail">❌ 정의 없음</span></td><td>아기 정보 저장 불가</td></tr>
+      <tr><td><code>babyMonths</code></td><td>global (lines 455,462,500,557)</td><td><span class="fail">❌ 정의 없음</span></td><td>개월수 계산 결과 저장 불가</td></tr>
+    </table>
+
+    <h2>🏠 홈 탭</h2>
+    <div class="card">
+      <p><span class="ok">✅</span> Hero 섹션 렌더링 정상</p>
+      <p><span class="ok">✅</span> 빠른 작업 (냉장고/아기정보) — <code>switchTab()</code> 정상</p>
+      <p><span class="fail">❌</span> 연령대 퀵 링크 — <code>filterRecipes()</code> 없음 → 클릭 시 JavaScript 에러</p>
+      <p><span class="fail">❌</span> 추천 레시피 — <code>RECIPES</code> undefined → 데이터 안 뜸</p>
+    </div>
+
+    <h2>🧊 냉장고 탭</h2>
+    <div class="card">
+      <p><span class="ok">✅</span> 냉장고 Selector + 새 냉장고 생성</p>
+      <p><span class="ok">✅</span> 재료 추가 Modal (분류 / 재료명 / 수량 / 유통기한)</p>
+      <p><span class="ok">✅</span> <code>addFridgeItem()</code> → Supabase insert 정상</p>
+      <p><span class="ok">✅</span> <code>deleteFridgeItem()</code> → Supabase delete 정상</p>
+      <p><span class="ok">✅</span> 유통기한 임박 경고 + 알림 설정 버튼 정상</p>
+    </div>
+
+    <h2>🍳 레시피 탭</h2>
+    <div class="card">
+      <p><span class="fail">❌</span> 레시피 목록 — <code>RECIPES</code> undefined → 빈 화면</p>
+      <p><span class="warn">⚠️</span> 검색창 — <code>handleRecipeSearch()</code> 존재하지만 <code>RECIPES</code> 없어서 검색 불가</p>
+      <p><span class="fail">❌</span> 연령대 필터 — <code>currentAgeFilter</code> 변수 정의 없음 → 필터 작동 안 함</p>
+      <p><span class="ok">✅</span> 좋아요 버튼 (♥) — <code>toggleLike()</code> 존재, 로그인한 사용자만 동작</p>
+      <p><span class="ok">✅</span> 레시피 상세 Modal — <code>openRecipeModal()</code>, <code>closeRecipeModal()</code> 정상</p>
+    </div>
+
+    <h2>👶 아기정보 탭</h2>
+    <div class="card">
+      <p><span class="ok">✅</span> 아기 정보 조회 — <code>loadBabyProfile()</code> 정상</p>
+      <p><span class="fail">❌</span> 아기 정보 등록 Modal — Modal HTML 자체 없음</p>
+      <p><span class="fail">❌</span> <code>openBabyModal()</code>, <code>closeBabyModal()</code>, <code>saveBabyProfile()</code> — 전부 정의 없음</p>
+    </div>
+
+    <h2>🔗 Root Cause</h2>
+    <div class="card">
+      <p><code>loadRecipes()</code> 함수 자체가 없음 → <code>RECIPES</code> 전역 배열에 데이터가 저장되지 않음.</p>
+      <p style="margin-top:10px;"><code>data/recipes.json</code>을 <code>fetch()</code>로 불러오는 로직이 <code>initAuth()</code> 이후에 실행되어야 하는데, <strong style="color:#fca5a5">해당 함수가 존재하지 않습니다.</strong></p>
+      <p style="margin-top:10px;">대부분의 연령대 필터, 아기 정보 등록 Modal, 홈 추천 레시피가 <code>RECIPES</code>와 연관된 함수에 의존하고 있어, <strong style="color:#fca5a5">해당 데이터 없이 전체 레시피 기능이 무효</strong>입니다.</p>
+    </div>
+
+    <div class="conclusion">
+      <h3>🎯 결론</h3>
+      <p style="margin-top:10px;color:#fca5a5;font-weight:bold;">🔴 치명적: 레시피 목록 전체가 안 뜸 (RECIPES undefined)</p>
+      <p style="margin-top:10px;color:#fca5a5;font-weight:bold;">🔴 치명적: 아기 정보 등록이 완전히 불가 (Modal 없음)</p>
+      <p style="margin-top:10px;color:#fed7aa;">🟠 높음: 홈 연령대 퀵 링크 동작 안 함</p>
+      <p style="margin-top:10px;color:#fed7aa;">🟠 높음: 연령대 필터 작동 안 함</p>
+      <p style="margin-top:15px;">🟢 정상: 냉장고 CRUD (생성/추가/삭제/조회)</p>
+      <p style="margin-top:5px;">🟢 정상: Supabase Auth (Google OAuth)</p>
+      <p style="margin-top:5px;">🟢 정상: PWA Service Worker</p>
+      <p style="margin-top:5px;">🟢 정상: 레시피 상세 Modal</p>
+      <p style="margin-top:15px;font-size:0.9em;color:#94a3b8;">📂 상세 검증 내용: <code>~/Obsidian-jssh/projects/LittleMates/검증보고서-2026-05-17-2차.md</code></p>
+    </div>
+
+    <div class="footer">
+      마지막 업데이트: 2026-05-17 &nbsp;|&nbsp; 검증자: 장그래 (OpenClaw)
+    </div>
+  </div>
+</body>
+</html>

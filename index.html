@@ -37,16 +37,65 @@
 
   <!-- Tab Navigation -->
   <div class="flex gap-2 mb-6 overflow-x-auto">
-    <button onclick="switchTab('fridge')" class="tab-btn px-4 py-2 rounded-full text-sm font-medium bg-indigo-100 text-indigo-700" data-tab="fridge">🧊 냉장고</button>
+    <button onclick="switchTab('home')" class="tab-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600" data-tab="home">🏠 홈</button>
+    <button onclick="switchTab('fridge')" class="tab-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600" data-tab="fridge">🧊 냉장고</button>
     <button onclick="switchTab('recipes')" class="tab-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600" data-tab="recipes">🍳 레시피</button>
     <button onclick="switchTab('baby')" class="tab-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600" data-tab="baby">👶 아기정보</button>
   </div>
 
+  <!-- ===== TAB: 홈 (Hero) ===== -->
+  <section id="tab-home" class="tab-content">
+    <div class="text-center py-8">
+      <h1 class="text-2xl font-bold text-gray-800 mb-2">우리 아이를 위한 건강한 첫 걸음</h1>
+      <p class="text-gray-500 text-sm mb-6">신선한 재료와 부드러운 영양으로 아이의 성장을 돕습니다</p>
+      <div class="bg-indigo-50 rounded-xl p-4 text-sm text-indigo-700 mb-4">
+        👶 아기 정보를 등록하면 연령별 맞춤 레시피를 추천해 드립니다.
+      </div>
+    </div>
+    <!-- 연령대 퀵 링크 -->
+    <div class="mb-6">
+      <p class="text-xs font-semibold text-gray-400 uppercase mb-2">연령대별 이유식</p>
+      <div class="flex flex-wrap gap-2">
+        <button onclick="switchTab('recipes'); setTimeout(()=>filterRecipes('6m'),50)" class="px-3 py-1.5 bg-indigo-100 text-indigo-700 rounded-full text-sm hover:bg-indigo-200 transition">6개월~</button>
+        <button onclick="switchTab('recipes'); setTimeout(()=>filterRecipes('7-9m'),50)" class="px-3 py-1.5 bg-indigo-100 text-indigo-700 rounded-full text-sm hover:bg-indigo-200 transition">7-9개월</button>
+        <button onclick="switchTab('recipes'); setTimeout(()=>filterRecipes('10-12m'),50)" class="px-3 py-1.5 bg-indigo-100 text-indigo-700 rounded-full text-sm hover:bg-indigo-200 transition">10-12개월</button>
+        <button onclick="switchTab('recipes'); setTimeout(()=>filterRecipes('12m'),50)" class="px-3 py-1.5 bg-indigo-100 text-indigo-700 rounded-full text-sm hover:bg-indigo-200 transition">12개월+</button>
+      </div>
+    </div>
+    <!-- 최근 레시피 -->
+    <div class="mb-6">
+      <p class="text-xs font-semibold text-gray-400 uppercase mb-2">추천 레시피</p>
+      <div id="homeRecipeList" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+    </div>
+    <!-- 빠른 작업 -->
+    <div class="grid grid-cols-2 gap-3">
+      <button onclick="switchTab('fridge')" class="bg-white rounded-xl p-4 shadow-sm text-left hover:shadow-md transition">
+        <div class="text-xl mb-1">🧊</div>
+        <div class="text-sm font-semibold text-gray-800">냉장고 보기</div>
+        <div class="text-xs text-gray-400">재료 확인</div>
+      </button>
+      <button onclick="switchTab('baby')" class="bg-white rounded-xl p-4 shadow-sm text-left hover:shadow-md transition">
+        <div class="text-xl mb-1">👶</div>
+        <div class="text-sm font-semibold text-gray-800">아기 정보</div>
+        <div class="text-xs text-gray-400">정보 등록</div>
+      </button>
+    </div>
+  </section>
+
+
   <!-- ===== TAB: 냉장고 ===== -->
-  <section id="tab-fridge" class="tab-content">
+  <section id="tab-fridge" class="tab-content hidden">
     <div class="flex items-center justify-between mb-4">
-      <h2 class="text-xl font-bold text-gray-800">나의 냉장고</h2>
-      <button onclick="openFridgeModal()" class="text-sm bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700">+ 재료추가</button>
+      <div class="flex items-center gap-2">
+        <select id="fridgeSelector" onchange="switchFridge(this.value)" class="text-sm border rounded-lg px-2 py-1">
+          <option value="">냉장고 로딩중...</option>
+        </select>
+        <button onclick="openNewFridgeModal()" class="text-xs px-2 py-1 rounded border border-gray-300 hover:bg-gray-50">+ 새 냉장고</button>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="requestExpiryNotif()" id="notifBtn" class="text-xs px-2 py-1 rounded border border-gray-300 hover:bg-gray-50">🔔 알림설정</button>
+        <button onclick="openFridgeModal()" class="text-sm bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700">+ 재료추가</button>
+      </div>
     </div>
     <div id="fridgeList" class="space-y-2">
       <p class="text-gray-400 text-sm">냉장고가 비어있습니다. 재료를 추가해보세요.</p>
@@ -61,6 +110,9 @@
   <!-- ===== TAB: 레시피 ===== -->
   <section id="tab-recipes" class="tab-content hidden">
     <h2 class="text-xl font-bold text-gray-800 mb-4">🍳 이유식 레시피</h2>
+    <input type="text" id="recipeSearchInput" placeholder="레시피 검색..." oninput="handleRecipeSearch()" class="w-full border rounded-lg px-3 py-2 mb-3 text-sm">
+    <div id="allergyFilter" class="flex flex-wrap gap-2 mb-4"></div>
+    <div id="ageFilter" class="flex flex-wrap gap-2 mb-4"></div>
     <div id="recipeList" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <p class="text-gray-400 text-sm col-span-2">레시피를 불러오는 중...</p>
     </div>
@@ -86,19 +138,17 @@
     </div>
     <div class="space-y-3">
       <div>
-        <label class="text-sm font-medium text-gray-700">재료명</label>
-        <input type="text" id="itemName" class="w-full border rounded-lg px-3 py-2 mt-1 text-sm" placeholder="예: 당근">
+        <label class="text-sm font-medium text-gray-700">분류</label>
+        <select id="itemCategory" class="w-full border rounded-lg px-3 py-2 mt-1 text-sm" onchange="onCategoryChange()">
+          <option value="">선택</option>
+        </select>
       </div>
       <div>
-        <label class="text-sm font-medium text-gray-700">분류</label>
-        <select id="itemCategory" class="w-full border rounded-lg px-3 py-2 mt-1 text-sm">
-          <option value="채소">🥬 채소</option>
-          <option value="과일">🍎 과일</option>
-          <option value="육류">🥩 육류</option>
-          <option value="어류">🐟 어류</option>
-          <option value="곡물">🌾 곡물</option>
-          <option value="유제품">🧀 유제품</option>
+        <label class="text-sm font-medium text-gray-700">재료명</label>
+        <select id="itemNameSelect" class="w-full border rounded-lg px-3 py-2 mt-1 text-sm" onchange="onNameSelectChange()">
+          <option value="">선택</option>
         </select>
+        <input type="text" id="itemNameInput" class="w-full border rounded-lg px-3 py-2 mt-1 text-sm hidden" placeholder="직접 입력">
       </div>
       <div>
         <label class="text-sm font-medium text-gray-700">수량</label>
@@ -178,6 +228,24 @@
   // ── Supabase Client ──────────────────────────────────────
   const sb = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
   let currentUser = null;
+  let userLikes = {};
+  let recipeLikeCounts = {};
+
+  // ── Ingredients (from data/ingredients.json) ─────────────
+  let INGREDIENTS = {};
+  let RECIPES = [];
+  var babyMonths = null;
+  var currentAgeFilter = 'all';
+
+  async function loadIngredients() {
+    try {
+      const res = await fetch('./data/ingredients.json');
+      if (!res.ok) throw new Error('ingredients.json not found');
+      INGREDIENTS = await res.json();
+    } catch (e) {
+      console.warn('ingredients.json load failed:', e);
+    }
+  }
 
   // ── Auth ─────────────────────────────────────────────────
   async function initAuth() {
@@ -222,17 +290,46 @@
     });
     if (tab === 'fridge' && currentUser) loadFridgeItems();
     if (tab === 'baby' && currentUser) loadBabyProfile();
+    if (tab === 'home') renderHomeRecipes();
   }
 
   // ── Fridge CRUD ──────────────────────────────────────────
-  async function loadFridgeItems() {
+  var currentFridgeId = null;
+
+  async function loadFridges() {
     if (!currentUser) return;
-    const { data: fridges } = await sb.from('fridges').select('id').eq('user_id', currentUser.id).maybeSingle();
-    if (!fridges) {
-      document.getElementById('fridgeList').innerHTML = '<p class="text-gray-400 text-sm">냉장고가 비어있습니다. 재료를 추가해보세요.</p>';
+    const { data } = await sb.from('fridges').select('id, name').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+    const sel = document.getElementById('fridgeSelector');
+    if (!data || !data.length) {
+      sel.innerHTML = '<option value="">냉장고 없음</option>';
+      currentFridgeId = null;
+      document.getElementById('fridgeList').innerHTML = '<p class="text-gray-400 text-sm">냉장고를 먼저 만들어주세요.</p>';
       return;
     }
-    const { data: items } = await sb.from('fridge_items').select('*').eq('fridge_id', fridges.id).order('created_at', { ascending: false });
+    sel.innerHTML = data.map(f => '<option value="' + f.id + '">' + f.name + '</option>').join('');
+    currentFridgeId = currentFridgeId || data[0].id;
+    sel.value = currentFridgeId;
+    loadFridgeItems();
+  }
+
+  function switchFridge(id) {
+    currentFridgeId = id;
+    loadFridgeItems();
+  }
+
+  async function openNewFridgeModal() {
+    var name = prompt('새 냉장고 이름:');
+    if (!name) return;
+    const { data, error } = await sb.from('fridges').insert({ user_id: currentUser.id, name: name }).select().single();
+    if (error) { alert('생성 실패: ' + error.message); return; }
+    await loadFridges();
+    currentFridgeId = data.id;
+    document.getElementById('fridgeSelector').value = currentFridgeId;
+  }
+
+  async function loadFridgeItems() {
+    if (!currentUser || !currentFridgeId) return;
+    const { data: items } = await sb.from('fridge_items').select('*').eq('fridge_id', currentFridgeId).order('created_at', { ascending: false });
     renderFridgeItems(items || []);
   }
 
@@ -271,94 +368,130 @@
   function openFridgeModal() {
     if (!currentUser) { alert('로그인 후 이용해주세요'); return; }
     document.getElementById('fridgeModal').classList.remove('hidden');
+    populateCategorySelect();
   }
+
+  function populateCategorySelect() {
+    const sel = document.getElementById('itemCategory');
+    sel.innerHTML = '<option value="">선택</option>';
+    Object.keys(INGREDIENTS).forEach(function(cat) {
+      sel.innerHTML += '<option value="' + cat + '">' + getCategoryEmoji(cat) + ' ' + cat + '</option>';
+    });
+    const nameSel = document.getElementById('itemNameSelect');
+    nameSel.innerHTML = '<option value="">선택</option>';
+    document.getElementById('itemNameInput').classList.add('hidden');
+    nameSel.classList.remove('hidden');
+  }
+
+  function onCategoryChange() {
+    const cat = document.getElementById('itemCategory').value;
+    const nameSel = document.getElementById('itemNameSelect');
+    const nameInput = document.getElementById('itemNameInput');
+    if (!cat) {
+      nameSel.innerHTML = '<option value="">선택</option>';
+      return;
+    }
+    const items = INGREDIENTS[cat] || [];
+    nameSel.innerHTML = '<option value="">선택</option><option value="__custom__">✏️ 직접 입력</option>';
+    items.forEach(function(item) {
+      nameSel.innerHTML += '<option value="' + item.name + '">' + (item.emoji || '') + ' ' + item.name + '</option>';
+    });
+    nameInput.classList.add('hidden');
+    nameSel.classList.remove('hidden');
+  }
+
+  function onNameSelectChange() {
+    const nameSel = document.getElementById('itemNameSelect');
+    const nameInput = document.getElementById('itemNameInput');
+    if (nameSel.value === '__custom__') {
+      nameSel.classList.add('hidden');
+      nameInput.classList.remove('hidden');
+      nameInput.value = '';
+      nameInput.focus();
+    }
+  }
+
   function closeFridgeModal() {
     document.getElementById('fridgeModal').classList.add('hidden');
-    ['itemName','itemCategory','itemQuantity','itemExpiry'].forEach(function(id) { document.getElementById(id).value = ''; });
+    ['itemCategory','itemQuantity','itemExpiry'].forEach(function(id) { document.getElementById(id).value = ''; });
+    document.getElementById('itemNameSelect').value = '';
+    document.getElementById('itemNameInput').value = '';
+    document.getElementById('itemNameInput').classList.add('hidden');
+    document.getElementById('itemNameSelect').classList.remove('hidden');
   }
 
   async function addFridgeItem() {
     if (!currentUser) return;
-    var name = document.getElementById('itemName').value.trim();
     var category = document.getElementById('itemCategory').value;
+    var nameSelect = document.getElementById('itemNameSelect');
+    var nameInput = document.getElementById('itemNameInput');
+    var name = nameInput.classList.contains('hidden') ? nameSelect.value : nameInput.value.trim();
     var quantity = document.getElementById('itemQuantity').value.trim();
     var expiry = document.getElementById('itemExpiry').value;
+    if (!category) { alert('분류를 선택해주세요'); return; }
     if (!name) { alert('재료명을 입력해주세요'); return; }
 
     var fridge;
-    var existing = await sb.from('fridges').select('id').eq('user_id', currentUser.id).maybeSingle();
-    if (existing.data) {
-      fridge = existing.data;
-    } else {
-      var newFridge = await sb.from('fridges').insert({ user_id: currentUser.id, name: '나의 냉장고' }).select().single();
-      fridge = newFridge.data;
+    if (!currentFridgeId) {
+      alert('냉장고를 먼저 만들어주세요.');
+      return;
     }
+    fridge = { id: currentFridgeId };
 
-    var error = await sb.from('fridge_items').insert({
+    var result = await sb.from('fridge_items').insert({
       fridge_id: fridge.id, name: name, category: category, quantity: quantity, expiry_date: expiry || null
     });
-    if (error) alert('추가 실패: ' + error.message);
+    if (result.error) alert('추가 실패: ' + result.error.message);
     else { closeFridgeModal(); loadFridgeItems(); }
   }
 
   async function deleteFridgeItem(id) {
     if (!confirm('삭제할까요?')) return;
-    await sb.from('fridge_items').delete().eq('id', id);
-    loadFridgeItems();
+    var result = await sb.from('fridge_items').delete().eq('id', id);
+    if (result.error) alert('삭제 실패: ' + result.error.message);
+    else loadFridgeItems();
   }
 
   // ── Baby Profile ─────────────────────────────────────────
   async function loadBabyProfile() {
     if (!currentUser) return;
     var data = (await sb.from('baby_profiles').select('*').eq('user_id', currentUser.id).maybeSingle()).data;
-    if (!data) return;
+    if (!data) { babyMonths = null; return; }
+
+    // 생년월일로부터 개월수 계산
+    var birth = new Date(data.birth_date);
+    var now = new Date();
+    var months = (now.getFullYear() - birth.getFullYear()) * 12 + (now.getMonth() - birth.getMonth());
+    if (now.getDate() < birth.getDate()) months--;
+    babyMonths = months;
+    localStorage.setItem('babyMonths', months);
+
     var allHtml = data.allergies && data.allergies.length
       ? '<p class="text-sm text-amber-600">⚠️ 알레르기: ' + data.allergies.join(', ') + '</p>'
       : '';
-    document.getElementById('babyProfile').innerHTML = '<div class="space-y-2"><p class="text-2xl font-bold">' + data.name + '</p><p class="text-sm text-gray-500">🎂 ' + data.birth_date + '</p>' + allHtml + '</div><button onclick="openBabyModal()" class="mt-3 text-sm border px-4 py-2 rounded-lg hover:bg-gray-50">수정</button>';
+    document.getElementById('babyProfile').innerHTML = '<div class="space-y-2"><p class="text-2xl font-bold">' + data.name + '</p><p class="text-sm text-gray-500">🎂 ' + data.birth_date + '</p><p class="text-sm text-indigo-600 font-medium">' + babyMonths + '개월</p>' + allHtml + '</div><button onclick="openBabyModal()" class="mt-3 text-sm border px-4 py-2 rounded-lg hover:bg-gray-50">수정</button>';
   }
 
-  function openBabyModal() {
-    if (!currentUser) { alert('로그인 후 이용해주세요'); return; }
-    document.getElementById('babyModal').classList.remove('hidden');
-  }
-  function closeBabyModal() {
-    document.getElementById('babyModal').classList.add('hidden');
-    ['babyName','babyBirth','babyAllergies'].forEach(function(id) { document.getElementById(id).value = ''; });
-  }
-
-  async function saveBabyProfile() {
+  async function loadUserLikes() {
     if (!currentUser) return;
-    var name = document.getElementById('babyName').value.trim();
-    var birth = document.getElementById('babyBirth').value;
-    var allergyInput = document.getElementById('babyAllergies').value;
-    var allergies = allergyInput ? allergyInput.split(',').map(function(s) { return s.trim(); }).filter(Boolean) : [];
-    if (!name || !birth) { alert('이름과 생일을 입력해주세요'); return; }
-
-    var existing = (await sb.from('baby_profiles').select('id').eq('user_id', currentUser.id).maybeSingle()).data;
-    var payload = { user_id: currentUser.id, name: name, birth_date: birth, allergies: allergies };
-    var error;
-    if (existing) {
-      error = (await sb.from('baby_profiles').update(payload).eq('user_id', currentUser.id)).error;
-    } else {
-      error = (await sb.from('baby_profiles').insert(payload)).error;
-    }
-    if (error) alert('저장 실패: ' + error.message);
-    else { closeBabyModal(); loadBabyProfile(); }
+    const { data } = await sb.from('user_likes').select('recipe_id').eq('user_id', currentUser.id);
+    userLikes = {};
+    if (data) data.forEach(d => userLikes[d.recipe_id] = true);
   }
 
-  // ── Recipes (from recipes.json) ────────────────────────
-  var RECIPES = [];
-
-  async function loadRecipes() {
-    try {
-      var res = await fetch('./data/recipes.json');
-      if (!res.ok) throw new Error('recipes.json not found');
-      RECIPES = await res.json();
-      renderRecipes(RECIPES);
-    } catch (e) {
-      renderRecipes([{ title: '샘플 레시피', age: '6m', emoji: '🥕', desc: '레시피 로드 실패', ingredients: [], method: [], nutrition: {} }]);
+  async function loadLikeCounts() {
+    if (!currentUser) return;
+    const { data } = await sb.from('user_likes').select('recipe_id').eq('user_id', currentUser.id);
+    recipeLikeCounts = {};
+    if (data) {
+      data.forEach(d => {
+        recipeLikeCounts[d.recipe_id] = (recipeLikeCounts[d.recipe_id] || 0) + 1;
+      });
     }
+  }
+
+  function getLikeCount(recipeId) {
+    return recipeLikeCounts[recipeId] || 0;
   }
 
   function renderRecipes(recipes) {
@@ -367,13 +500,59 @@
       container.innerHTML = '<p class="text-gray-400 text-sm col-span-2">레시피가 없습니다.</p>';
       return;
     }
-    container.innerHTML = recipes.map(function(r) {
+    // Sort by like count (descending)
+    var sorted = recipes.slice().sort(function(a, b) {
+      return (recipeLikeCounts[b.id] || 0) - (recipeLikeCounts[a.id] || 0);
+    });
+    container.innerHTML = sorted.map(function(r) {
+      var likeCount = getLikeCount(r.id);
+      var stageText = r.stage || ''; // fixed: use r.stage, not undefined recipeStage
+      var countHtml = likeCount > 0 ? '<span class="text-xs text-gray-400 ml-1">(' + likeCount + ')</span>' : '';
       return '<div class="bg-white rounded-xl p-4 shadow-sm cursor-pointer hover:shadow-md transition" onclick="openRecipeModal(' + r.id + ')">' +
         '<div class="w-full h-28 rounded-lg mb-3 flex items-center justify-center text-4xl" style="background:' + (r.imgColor || '#F3F4F6') + '">' + (r.emoji || '🍽️') + '</div>' +
-        '<p class="font-semibold text-gray-800">' + r.title + '</p>' +
-        '<p class="text-xs text-gray-400 mb-1">' + (r.ageLabel || r.age) + ' · ' + (r.stage || '') + '</p>' +
+        '<div class="flex items-center justify-between"><p class="font-semibold text-gray-800">' + r.title + '</p>' +
+        '<div class="flex items-center"><span class="text-xs text-gray-300 mr-1">' + likeCount + '</span><button onclick="event.stopPropagation();toggleLike(' + r.id + ')" class="text-xl ' + (userLikes[r.id] ? 'text-red-500' : 'text-gray-300') + ' hover:text-red-400">♥</button>' + countHtml + '</div></div>' +
+        '<p class="text-xs text-gray-400 mb-1">' + (r.ageLabel || r.age) + ' · ' + stageText + '</p>' +
         '<p class="text-sm text-gray-500">' + (r.desc || '') + '</p></div>';
     }).join('');
+  }
+
+  function renderHomeRecipes() {
+    var container = document.getElementById('homeRecipeList');
+    if (!RECIPES || !RECIPES.length) {
+      container.innerHTML = '<p class="text-gray-400 text-sm col-span-2">레시피를 불러오는 중...</p>';
+      return;
+    }
+    var allowed = getAllowedAges(babyMonths);
+    var personalized = RECIPES.filter(function(r) { return allowed.includes(r.age); });
+    var featured = personalized.length >= 4 ? personalized.slice(0, 4) : RECIPES.slice(0, 4);
+    // Sort by like count (descending) for home recipes too
+    var sorted = featured.slice().sort(function(a, b) {
+      return (recipeLikeCounts[b.id] || 0) - (recipeLikeCounts[a.id] || 0);
+    });
+    container.innerHTML = sorted.map(function(r) {
+      var likeCount = getLikeCount(r.id);
+      return '<div class="bg-white rounded-xl p-3 shadow-sm cursor-pointer hover:shadow-md transition relative" onclick="openRecipeModal(' + r.id + ')">' +
+        '<div class="flex items-center absolute top-2 right-2">' + (likeCount > 0 ? '<span class="text-xs text-gray-300 mr-1">' + likeCount + '</span>' : '') + '<button onclick="event.stopPropagation();toggleLike(' + r.id + ')" class="text-lg ' + (userLikes[r.id] ? 'text-red-500' : 'text-gray-300') + ' hover:text-red-400">♥</button></div>' +
+        '<div class="w-full h-20 rounded-lg mb-2 flex items-center justify-center text-3xl" style="background:' + (r.imgColor || '#F3F4F6') + '">' + (r.emoji || '🍽️') + '</div>' +
+        '<p class="font-medium text-gray-800 text-sm">' + r.title + '</p>' +
+        '<p class="text-xs text-gray-400">' + (r.ageLabel || r.age) + '</p></div>';
+    }).join('');
+  }
+
+  async function toggleLike(recipeId) {
+    if (!currentUser) { alert('로그인 후 이용해주세요'); return; }
+    if (userLikes[recipeId]) {
+      await sb.from('user_likes').delete().eq('user_id', currentUser.id).eq('recipe_id', recipeId);
+      delete userLikes[recipeId];
+      recipeLikeCounts[recipeId] = Math.max(0, (recipeLikeCounts[recipeId] || 0) - 1);
+    } else {
+      await sb.from('user_likes').upsert({ user_id: currentUser.id, recipe_id: recipeId });
+      userLikes[recipeId] = true;
+      recipeLikeCounts[recipeId] = (recipeLikeCounts[recipeId] || 0) + 1;
+    }
+    renderRecipes(RECIPES);
+    renderHomeRecipes();
   }
 
   function openRecipeModal(id) {
@@ -406,27 +585,185 @@
     document.getElementById('recipeModal').classList.remove('hidden');
   }
 
+  function handleRecipeSearch() {
+    var query = document.getElementById('recipeSearchInput').value.toLowerCase();
+    var allowed = getAllowedAges(babyMonths);
+    var filtered = RECIPES.filter(function(r) {
+      if (!allowed.includes(r.age)) return false;
+      if (query && !(r.title.toLowerCase().includes(query) || (r.desc && r.desc.toLowerCase().includes(query)) || (r.ingredients && r.ingredients.some(i => i.toLowerCase().includes(query))))) return false;
+      if (currentAgeFilter !== 'all' && r.age !== currentAgeFilter) return false;
+      if (excludedAllergies.length && r.allergens && excludedAllergies.some(a => r.allergens.includes(a))) return false;
+      return true;
+    });
+    renderRecipes(filtered);
+  }
+
+  function renderAllergyFilterButtons() {
+    var allergies = ['fish', 'soy', 'milk', 'egg', 'wheat', 'peanut'];
+    var container = document.getElementById('allergyFilter');
+    if (!container) return;
+    container.innerHTML = '<span class="text-xs text-gray-500 self-center">제외:</span> ' + allergies.map(function(a) {
+      return '<button onclick="toggleAllergyFilter(\'' + a + '\')" class="px-2 py-1 rounded-full text-xs border border-gray-300 hover:bg-red-50">' + a + '</button>';
+    }).join(' ');
+  }
+
+  function renderAgeFilterButtons() {
+    var container = document.getElementById('ageFilter');
+    if (!container) return;
+    var ages = [
+      { key: 'all', label: '전체' },
+      { key: '6m', label: '6개월~' },
+      { key: '7-9m', label: '7-9개월' },
+      { key: '10-12m', label: '10-12개월' },
+      { key: '12m+', label: '12개월+' }
+    ];
+    container.innerHTML = ages.map(function(a) {
+      var active = currentAgeFilter === a.key ? 'bg-indigo-100 text-indigo-700 border-indigo-300' : 'bg-gray-50 text-gray-600 border-gray-300';
+      return '<button onclick="filterRecipes(\'' + a.key + '\')" class="px-3 py-1.5 rounded-full text-sm border hover:border-indigo-400 ' + active + '">' + a.label + '</button>';
+    }).join(' ');
+  }
+
+  var excludedAllergies = [];
+
+  function toggleAllergyFilter(allergy) {
+    var idx = excludedAllergies.indexOf(allergy);
+    if (idx >= 0) excludedAllergies.splice(idx, 1);
+    else excludedAllergies.push(allergy);
+    handleRecipeSearch();
+  }
+
   function closeRecipeModal() {
     document.getElementById('recipeModal').classList.add('hidden');
   }
 
   // ── Init ────────────────────────────────────────────────
-  initAuth().then(function() {
+  initAuth().then(async function() {
+    await loadIngredients();
     if (currentUser) {
-      loadFridgeItems();
+      loadFridges();
       loadBabyProfile();
+      await loadUserLikes();
+      await loadLikeCounts();
+      checkExpiryNotification();
+      if (localStorage.getItem('expiryNotif') === 'true') {
+        document.getElementById('notifBtn').textContent = '🔕 알림해제';
+      }
     }
-
-  // Service Worker registration (PWA offline support)
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/sw.js").then(function() {
-      console.log("SW registered");
-    }).catch(function(err) {
-      console.warn("SW registration failed:", err);
-    });
-  }
+    // Service Worker registration (PWA offline support)
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").then(function() {
+        console.log("SW registered");
+      }).catch(function(err) {
+        console.warn("SW registration failed:", err);
+      });
+    }
     loadRecipes();
+    renderAllergyFilterButtons();
+    renderAgeFilterButtons();
   });
+
+  async function loadRecipes() {
+    try {
+      const res = await fetch('./data/recipes.json');
+      if (!res.ok) throw new Error('recipes.json not found');
+      RECIPES = await res.json();
+      renderRecipes(RECIPES);
+      renderHomeRecipes();
+    } catch (e) {
+      console.warn('recipes.json load failed:', e);
+    }
+  }
+
+  function getAllowedAges(months) {
+    if (!months) return [];
+    if (months < 6) return ['6m'];
+    if (months <= 9) return ['6m', '7-9m'];
+    if (months <= 12) return ['6m', '7-9m', '10-12m'];
+    return ['6m', '7-9m', '10-12m', '12m+'];
+  }
+
+  function filterRecipes(age) {
+    currentAgeFilter = age;
+    handleRecipeSearch();
+  }
+
+  function openBabyModal() {
+    document.getElementById('babyModal').classList.remove('hidden');
+    document.getElementById('babyName').value = '';
+    document.getElementById('babyBirth').value = '';
+    document.getElementById('babyAllergies').value = '';
+  }
+
+  function closeBabyModal() {
+    document.getElementById('babyModal').classList.add('hidden');
+  }
+
+  async function saveBabyProfile() {
+    if (!currentUser) { alert('로그인 후 이용해주세요'); return; }
+    const name = document.getElementById('babyName').value.trim();
+    const birthStr = document.getElementById('babyBirth').value;
+    const allergiesStr = document.getElementById('babyAllergies').value.trim();
+    if (!name) { alert('이름을 입력해주세요'); return; }
+    if (!birthStr) { alert('생년월일을 입력해주세요'); return; }
+    const allergies = allergiesStr ? allergiesStr.split(',').map(a => a.trim()).filter(Boolean) : [];
+    const birthDate = new Date(birthStr);
+    const months = Math.floor((Date.now() - birthDate.getTime()) / (1000 * 60 * 60 * 24 * 30.44));
+    const { data: existing } = await sb.from('baby_profiles').select('id').eq('user_id', currentUser.id).maybeSingle();
+    let result;
+    if (existing) {
+      result = await sb.from('baby_profiles').update({ name, birth_date: birthStr, allergies }).eq('user_id', currentUser.id);
+    } else {
+      result = await sb.from('baby_profiles').insert({ user_id: currentUser.id, name, birth_date: birthStr, allergies });
+    }
+    if (result.error) { alert('저장 실패: ' + result.error.message); return; }
+    babyMonths = months;
+    localStorage.setItem('babyMonths', months);
+    closeBabyModal();
+    await loadBabyProfile();
+  }
+
+  async function checkExpiryNotification() {
+    if (!currentUser) return;
+    const notifEnabled = localStorage.getItem('expiryNotif') === 'true';
+    if (!notifEnabled) return;
+    if (!('Notification' in window)) return;
+    if (Notification.permission !== 'granted') return;
+    const { data: fridges } = await sb.from('fridges').select('id').eq('user_id', currentUser.id);
+    if (!fridges || !fridges.length) return;
+    const allNear = [];
+    for (const fridge of fridges) {
+      const { data: items } = await sb.from('fridge_items').select('name, expiry_date').eq('fridge_id', fridge.id);
+      if (!items) continue;
+      const near = items.filter(i => i.expiry_date && new Date(i.expiry_date) <= new Date(Date.now() + 3*86400000));
+      if (near.length) allNear.push(...near);
+    }
+    if (allNear.length) {
+      new Notification('⚠️ 유통기한 임박', { body: allNear.map(i=>i.name).join(', ') + '이(가) 곧 기간됩니다.', icon: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🥬</text></svg>' });
+    }
+  }
+
+  async function requestExpiryNotif() {
+    if (!('Notification' in window)) { alert('이 브라우저는 알림을 지원하지 않습니다.'); return; }
+    if (Notification.permission === 'granted') {
+      const enabled = localStorage.getItem('expiryNotif') === 'true';
+      if (enabled) {
+        localStorage.setItem('expiryNotif', 'false');
+        document.getElementById('notifBtn').textContent = '🔔 알림설정';
+        alert('알림이 해제되었습니다.');
+      } else {
+        localStorage.setItem('expiryNotif', 'true');
+        document.getElementById('notifBtn').textContent = '🔕 알림해제';
+        alert('유통기한 알림이 설정되었습니다.');
+      }
+    } else {
+      const perm = await Notification.requestPermission();
+      if (perm === 'granted') {
+        localStorage.setItem('expiryNotif', 'true');
+        document.getElementById('notifBtn').textContent = '🔕 알림해제';
+        alert('유통기한 알림이 설정되었습니다.');
+      }
+    }
+  }
 </script>
 </body>
 </html>
