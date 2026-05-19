@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#6366F1">
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 512 512%27><rect width=%27512%27 height=%27512%27 rx=%2796%27 fill=%27%236366F1%27/><text x=%27256%27 y=%27340%27 font-size=%27280%27 text-anchor=%27middle%27>🍼</text></svg>">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -237,6 +237,12 @@
   var babyMonths = null;
   var currentAgeFilter = 'all';
 
+  // 복원: 페이지 새로고침 시 babyMonths 재계산 (Number 명시적 변환)
+  var storedBabyMonths = localStorage.getItem('babyMonths');
+  if (storedBabyMonths !== null) {
+    babyMonths = Number(storedBabyMonths);
+  }
+
   async function loadIngredients() {
     try {
       const res = await fetch('./data/ingredients.json');
@@ -288,7 +294,12 @@
         ? 'tab-btn px-4 py-2 rounded-full text-sm font-medium bg-indigo-100 text-indigo-700'
         : 'tab-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600';
     });
-    if (tab === 'fridge' && currentUser) loadFridgeItems();
+    if (tab === 'fridge') {
+      if (currentUser) loadFridgeItems();
+      else {
+        document.getElementById('fridgeList').innerHTML = '<div class="text-center py-8"><p class="text-gray-400 text-sm">🔒 로그인 후 냉장고를 사용할 수 있습니다.</p><button onclick="signInWithGoogle()" class="mt-2 text-sm bg-indigo-600 text-white px-4 py-2 rounded-lg">Google 로그인</button></div>';
+      }
+    }
     if (tab === 'baby' && currentUser) loadBabyProfile();
     if (tab === 'home') renderHomeRecipes();
   }
