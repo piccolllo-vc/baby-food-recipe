@@ -1,37 +1,85 @@
 {
   "채소": [
-    { "id": "pumpkin", "name": "단호박", "emoji": "🎃" },
-    { "id": "broccoli", "name": "브로콜리", "emoji": "🥦" },
-    { "id": "carrot", "name": "당근", "emoji": "🥕" },
-    { "id": "spinach", "name": "시금치", "emoji": "🥬" },
-    { "id": "potato", "name": "감자", "emoji": "🥔" },
-    { "id": "zucchini", "name": "호박", "emoji": "🫛" },
-    { "id": "tomato", "name": "토마토", "emoji": "🍅" },
-    { "id": "cucumber", "name": "오이", "emoji": "🥒" }
+    { "id": "pumpkin", "name": "단호박", "emoji": "🎃", "shelfLifeFridge": 30, "shelfLifeFreezer": 180, "warningDays": 3 },
+    { "id": "broccoli", "name": "브로콜리", "emoji": "🥦", "shelfLifeFridge": 7, "shelfLifeFreezer": 365, "warningDays": 2 },
+    { "id": "carrot", "name": "당근", "emoji": "🥕", "shelfLifeFridge": 30, "shelfLifeFreezer": 365, "warningDays": 5 },
+    { "id": "spinach", "name": "시금치", "emoji": "🥬", "shelfLifeFridge": 5, "shelfLifeFreezer": 180, "warningDays": 1 },
+    { "id": "potato", "name": "감자", "emoji": "🥔", "shelfLifeFridge": 30, "shelfLifeFreezer": 365, "warningDays": 5 },
+    { "id": "zucchini", "name": "호박", "emoji": "🫛", "shelfLifeFridge": 7, "shelfLifeFreezer": 180, "warningDays": 2 },
+    { "id": "tomato", "name": "토마토", "emoji": "🍅", "shelfLifeFridge": 7, "shelfLifeFreezer": 180, "warningDays": 2 },
+    { "id": "cucumber", "name": "오이", "emoji": "🥒", "shelfLifeFridge": 7, "shelfLifeFreezer": 0, "warningDays": 2 },
+    { "id": "cabbage", "name": "양배추", "emoji": "🥬", "shelfLifeFridge": 14, "shelfLifeFreezer": 180, "warningDays": 3 },
+    { "id": "onion", "name": "양파", "emoji": "🧅", "shelfLifeFridge": 30, "shelfLifeFreezer": 180, "warningDays": 5 },
+    { "id": "garlic", "name": "마늘", "emoji": "🧄", "shelfLifeFridge": 90, "shelfLifeFreezer": 365, "warningDays": 7 },
+    { "id": "greenOnion", "name": "대파", "emoji": "🥬", "shelfLifeFridge": 7, "shelfLifeFreezer": 180, "warningDays": 2 },
+    { "id": "mushroom", "name": "버섯", "emoji": "🍄", "shelfLifeFridge": 5, "shelfLifeFreezer": 180, "warningDays": 1 },
+    { "id": "seaweed", "name": "미역", "emoji": "🌿", "shelfLifeFridge": 180, "shelfLifeFreezer": 365, "warningDays": 14 }
   ],
   "과일": [
-    { "id": "apple", "name": "사과", "emoji": "🍎" },
-    { "id": "banana", "name": "바나나", "emoji": "🍌" },
-    { "id": "pear", "name": "배", "emoji": "🍐" },
-    { "id": "avocado", "name": "아보카도", "emoji": "🥑" },
-    { "id": "peach", "name": "복숭아", "emoji": "🍑" }
+    { "id": "apple", "name": "사과", "emoji": "🍎", "shelfLifeFridge": 30, "shelfLifeFreezer": 180, "warningDays": 5 },
+    { "id": "banana", "name": "바나나", "emoji": "🍌", "shelfLifeFridge": 5, "shelfLifeFreezer": 0, "warningDays": 1 },
+    { "id": "pear", "name": "배", "emoji": "🍐", "shelfLifeFridge": 14, "shelfLifeFreezer": 180, "warningDays": 3 },
+    { "id": "avocado", "name": "아보카도", "emoji": "🥑", "shelfLifeFridge": 5, "shelfLifeFreezer": 0, "warningDays": 1 },
+    { "id": "peach", "name": "복숭아", "emoji": "🍑", "shelfLifeFridge": 7, "shelfLifeFreezer": 180, "warningDays": 2 },
+    { "id": "grape", "name": "포도", "emoji": "🍇", "shelfLifeFridge": 7, "shelfLifeFreezer": 180, "warningDays": 2 },
+    { "id": "orange", "name": "오렌지", "emoji": "🍊", "shelfLifeFridge": 14, "shelfLifeFreezer": 180, "warningDays": 3 }
   ],
   "육류": [
-    { "id": "beef", "name": "소고기", "emoji": "🥩" },
-    { "id": "chicken", "name": "닭고기", "emoji": "🍗" },
-    { "id": "pork", "name": "돼지고기", "emoji": "🥓" },
-    { "id": "fish", "name": "연어", "emoji": "🐟" }
+    { "id": "beef", "name": "소고기", "emoji": "🥩", "shelfLifeFridge": 5, "shelfLifeFreezer": 180, "warningDays": 1, "isHighRisk": true },
+    { "id": "chicken", "name": "닭고기", "emoji": "🍗", "shelfLifeFridge": 3, "shelfLifeFreezer": 180, "warningDays": 1, "isHighRisk": true },
+    { "id": "pork", "name": "돼지고기", "emoji": "🥓", "shelfLifeFridge": 3, "shelfLifeFreezer": 180, "warningDays": 1, "isHighRisk": true },
+    { "id": "fish", "name": "생선", "emoji": "🐟", "shelfLifeFridge": 2, "shelfLifeFreezer": 90, "warningDays": 1, "isHighRisk": true },
+    { "id": "salmon", "name": "연어", "emoji": "🐟", "shelfLifeFridge": 2, "shelfLifeFreezer": 90, "warningDays": 1, "isHighRisk": true },
+    { "id": "shrimp", "name": "새우", "emoji": "🦐", "shelfLifeFridge": 3, "shelfLifeFreezer": 180, "warningDays": 1, "isHighRisk": true },
+    { "id": "duck", "name": "오리고기", "emoji": "🦆", "shelfLifeFridge": 5, "shelfLifeFreezer": 180, "warningDays": 1, "isHighRisk": true }
   ],
   "곡물": [
-    { "id": "rice", "name": "쌀", "emoji": "🍚" },
-    { "id": "oatmeal", "name": "귀리", "emoji": "🌾" },
-    { "id": "noodle", "name": "면", "emoji": "🍜" },
-    { "id": "bread", "name": "빵", "emoji": "🍞" }
+    { "id": "rice", "name": "쌀", "emoji": "🍚", "shelfLifeFridge": 180, "shelfLifeFreezer": 365, "warningDays": 14 },
+    { "id": "oatmeal", "name": "귀리", "emoji": "🌾", "shelfLifeFridge": 180, "shelfLifeFreezer": 365, "warningDays": 14 },
+    { "id": "noodle", "name": "면", "emoji": "🍜", "shelfLifeFridge": 180, "shelfLifeFreezer": 365, "warningDays": 14 },
+    { "id": "bread", "name": "식빵", "emoji": "🍞", "shelfLifeFridge": 7, "shelfLifeFreezer": 90, "warningDays": 2 },
+    { "id": "riceFlour", "name": "쌀가루", "emoji": "🍚", "shelfLifeFridge": 90, "shelfLifeFreezer": 365, "warningDays": 7 },
+    { "id": "wheatFlour", "name": "밀가루", "emoji": "🌾", "shelfLifeFridge": 180, "shelfLifeFreezer": 365, "warningDays": 14 }
   ],
   "유제품": [
-    { "id": "milk", "name": "우유", "emoji": "🥛" },
-    { "id": "cheese", "name": "치즈", "emoji": "🧀" },
-    { "id": "tofu", "name": "두부", "emoji": "🧈" },
-    { "id": "yogurt", "name": "요거트", "emoji": "🍶" }
-  ]
+    { "id": "milk", "name": "우유", "emoji": "🥛", "shelfLifeFridge": 14, "shelfLifeFreezer": 180, "warningDays": 2, "note": "소비기한 표시제 2031년부터 적용" },
+    { "id": "cheese", "name": "치즈", "emoji": "🧀", "shelfLifeFridge": 180, "shelfLifeFreezer": 365, "warningDays": 14 },
+    { "id": "tofu", "name": "두부", "emoji": "🧈", "shelfLifeFridge": 5, "shelfLifeFreezer": 180, "warningDays": 1 },
+    { "id": "yogurt", "name": "요거트", "emoji": "🍶", "shelfLifeFridge": 14, "shelfLifeFreezer": 180, "warningDays": 2 },
+    { "id": "butter", "name": "버터", "emoji": "🧈", "shelfLifeFridge": 90, "shelfLifeFreezer": 365, "warningDays": 7 },
+    { "id": "creamCheese", "name": "크림치즈", "emoji": "🧀", "shelfLifeFridge": 14, "shelfLifeFreezer": 180, "warningDays": 2 }
+  ],
+  "발효식품": [
+    { "id": "kimchi", "name": "김치", "emoji": "🥬", "shelfLifeFridge": 30, "shelfLifeFreezer": 180, "warningDays": 5 },
+    { "id": "doenjang", "name": "된장", "emoji": "🫘", "shelfLifeFridge": 180, "shelfLifeFreezer": 365, "warningDays": 14 },
+    { "id": "gochujang", "name": "고추장", "emoji": "🌶️", "shelfLifeFridge": 180, "shelfLifeFreezer": 365, "warningDays": 14 },
+    { "id": "soySauce", "name": "간장", "emoji": "🫗", "shelfLifeFridge": 365, "shelfLifeFreezer": 365, "warningDays": 30 },
+    { "id": "egg", "name": "달걀", "emoji": "🥚", "shelfLifeFridge": 14, "shelfLifeFreezer": 180, "warningDays": 3 }
+  ],
+  "기타": [
+    { "id": "ramen", "name": "라면", "emoji": "🍜", "shelfLifeFridge": 240, "shelfLifeFreezer": 365, "warningDays": 14 },
+    { "id": "instantRice", "name": "즉석밥", "emoji": "🍚", "shelfLifeFridge": 540, "shelfLifeFreezer": 730, "warningDays": 30 },
+    { "id": "dumpling", "name": "만두", "emoji": "🥟", "shelfLifeFridge": 14, "shelfLifeFreezer": 180, "warningDays": 2 },
+    { "id": "fishCake", "name": "어묵", "emoji": "🍢", "shelfLifeFridge": 14, "shelfLifeFreezer": 90, "warningDays": 2 },
+    { "id": "ham", "name": "햄", "emoji": "🥓", "shelfLifeFridge": 14, "shelfLifeFreezer": 180, "warningDays": 2 },
+    { "id": "sausage", "name": "소시지", "emoji": "🌭", "shelfLifeFridge": 14, "shelfLifeFreezer": 180, "warningDays": 2 },
+    { "id": "sesameOil", "name": "참기름", "emoji": "🫒", "shelfLifeFridge": 365, "shelfLifeFreezer": 730, "warningDays": 30 },
+    { "id": "cookingOil", "name": "식용유", "emoji": "🛢️", "shelfLifeFridge": 540, "shelfLifeFreezer": 730, "warningDays": 30 },
+    { "id": "sauce", "name": "婴幼儿 간장", "emoji": "🫗", "shelfLifeFridge": 180, "shelfLifeFreezer": 365, "warningDays": 14 }
+  ],
+  "영양소": [
+    { "id": "iron", "name": "철분제", "emoji": "💊", "shelfLifeFridge": 0, "shelfLifeFreezer": 0, "warningDays": 30 },
+    { "id": "vitamidD", "name": "비타민D", "emoji": "💊", "shelfLifeFridge": 0, "shelfLifeFreezer": 0, "warningDays": 30 },
+    { "id": "calcium", "name": "칼슘", "emoji": "💊", "shelfLifeFridge": 0, "shelfLifeFreezer": 0, "warningDays": 30 }
+  ],
+  "재료추가옵션": {
+    "unknown": {
+      "name": "직접입력",
+      "emoji": "✏️",
+      "shelfLifeFridge": 5,
+      "shelfLifeFreezer": 90,
+      "warningDays": 2,
+      "note": "알 수 없는 재료는 기본값 5일 적용"
+    }
+  }
 }
